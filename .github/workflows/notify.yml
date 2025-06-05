@@ -1,0 +1,17 @@
+name: Discord Notification
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # 毎日13:00 JST（UTC+9 → UTC=4）
+  workflow_dispatch:  # 手動でも実行可能
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send message to Discord
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d '{"content":"【イムセティ確認】1日も折り返し！イムセティを確認しよう！"}' \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
