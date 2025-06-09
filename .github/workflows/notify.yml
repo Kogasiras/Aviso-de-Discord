@@ -2,16 +2,41 @@ name: Discord Notification
 
 on:
   schedule:
-    - cron: '0 4 * * *'  # 毎日13:00 JST（UTC+9 → UTC=4）
-  workflow_dispatch:  # 手動でも実行可能
+    - cron: '0 22 * * *'  # 毎日7:00 JST（UTC+9 → UTC=22）
+    - cron: '0 4 * * *'   # 毎日13:00 JST（UTC+9 → UTC=4）
+    - cron: '0 14 * * *'  # 毎日23:00 JST（UTC+9 → UTC=14）
+  workflow_dispatch:  # 手動実行も可能
 
 jobs:
-  notify:
+  notify_morning:
+    if: github.event.schedule == '0 22 * * *'
     runs-on: ubuntu-latest
     steps:
-      - name: Send message to Discord
+      - name: Send morning message to Discord
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d '{"content":"【イムセティタスク追加】朝ですよ～起きたら1アド!"}' \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+  notify_midday:
+    if: github.event.schedule == '0 4 * * *'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send midday message to Discord
         run: |
           curl -H "Content-Type: application/json" \
                -X POST \
                -d '{"content":"【イムセティ確認】1日も折り返し！イムセティを確認しよう！"}' \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+  notify_night:
+    if: github.event.schedule == '0 14 * * *'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send night message to Discord
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d '{"content":"【イムセティタスク整理】おつかれさーん"}' \
                ${{ secrets.DISCORD_WEBHOOK_URL }}
